@@ -1,3 +1,4 @@
+using System;
 using Hellang.Middleware.ProblemDetails;
 using Hellang.Middleware.ProblemDetails.Mvc;
 using Microsoft.AspNetCore.Builder;
@@ -8,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Linq;
+using Microsoft.AspNetCore.Http;
 
 namespace Blazor.ProblemDetails.Server
 {
@@ -26,7 +28,7 @@ namespace Blazor.ProblemDetails.Server
     {
       services.AddProblemDetails(options =>
       {
-
+        options.MapToStatusCode<NotImplementedException>(StatusCodes.Status501NotImplemented);
       });
 
       services.AddControllersWithViews()

@@ -1,0 +1,34 @@
+@using Microsoft.Extensions.Logging
+@using System.Text.Json
+@inject ILogger<Error> Logger
+
+<CascadingValue Value=this>
+    @if (!string.IsNullOrEmpty(ErrorMessage))
+    {
+        <div class="alert alert-danger m-0">
+            <h4 class="alert-heading">Woops!</h4>
+            <pre class="error-container">@ErrorMessage</pre>
+        </div>
+    }
+    @ChildContent
+</CascadingValue>
+
+@code {
+
+    private static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        IgnoreNullValues = true,
+        WriteIndented = true,
+    };
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    public string ErrorMessage { get; set; }
+
+    public void ProcessProblem(ProblemDetails problem)
+    {
+        ErrorMessage = JsonSerializer.Serialize(problem.Extensions, JsonOptions);
+        StateHasChanged();
+    }
+}
