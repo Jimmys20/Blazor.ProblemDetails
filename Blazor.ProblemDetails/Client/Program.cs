@@ -17,7 +17,13 @@ namespace Blazor.ProblemDetails.Client
       var builder = WebAssemblyHostBuilder.CreateDefault(args);
       builder.RootComponents.Add<App>("#app");
 
-      builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+      builder.Services.AddTransient<ProblemDetailsHandler>();
+
+      builder.Services
+        .AddHttpClient("ServerAPI", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
+        .AddHttpMessageHandler<ProblemDetailsHandler>();
+
+      builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("ServerAPI"));
 
       await builder.Build().RunAsync();
     }
